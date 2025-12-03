@@ -14,6 +14,10 @@ import DoctorsIndex from "@/pages/doctors/Index";
 import DoctorsShow from "@/pages/doctors/Show";
 import DoctorsCreate from "@/pages/doctors/Create";
 import DoctorsEdit from "@/pages/doctors/Edit";
+import PatientsIndex from "@/pages/patients/Index";
+import PatientsShow from "@/pages/patients/Show";
+import PatientsCreate from "@/pages/patients/Create";
+import PatientsEdit from "@/pages/patients/Edit";
 
 import FormExamples from "@/pages/examples/Forms";
 
@@ -53,7 +57,21 @@ export default function App() {
                         path="/doctors/create"
                         element={<DoctorsCreate />}
                       />
+
+                     
                     </Route>
+                    <Route path="/" element={<ProtectedRoute />}>
+
+                    <Route path="/patients" element={<PatientsIndex />} />
+                    <Route path="/patients/:id" element={<PatientsShow />} />
+                    <Route path="/patients/:id/edit" element={<PatientsEdit />} />
+                    <Route path="/patients/create" element={<PatientsCreate />} />
+                    </Route>
+
+
+                    
+
+                    
 
                     <Route path="/forms" element={<FormExamples />} />
                   </Routes>

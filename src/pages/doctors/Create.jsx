@@ -7,11 +7,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function Create() {
     const [form, setForm] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone: "",
-        specialisation: ""
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        specialisation: ''
     });
 
     const navigate = useNavigate();
@@ -29,8 +29,9 @@ export default function Create() {
             method: "POST",
             url: `/doctors`,
             headers: {
-        "Content-Type": "application/json"
-    },
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
             data: form
         };
 

@@ -44,19 +44,14 @@ const data = {
       icon: IconConfetti,
     },
     {
-      title: "Stages",
-      url: "#",
+      title: "Patients",
+      url: "/patients",
       icon: IconTheater,
     },
     {
-      title: "Performers",
-      url: "#",
+      title: "Appointments",
+      url: "/appointments",
       icon: IconMicrophone2,
-    },
-    {
-      title: "Shows",
-      url: "#",
-      icon: IconMusic,
     },
   ],
   examples: [

@@ -10,96 +10,86 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
 
 export default function Index() {
-  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
   const navigate = useNavigate();
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const fetchPatients = async () => {
       const options = {
         method: "GET",
-        url: "/doctors",
+        url: "/patients",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, 
         },
       };
 
       try {
         let response = await axios.request(options);
-        console.log(response.data);
-        setDoctors(response.data);
+        setPatients(response.data);
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchDoctors();
+    fetchPatients();
   }, []);
 
   const onDeleteCallback = (id) => {
-    toast.success("Doctor deleted successfully");
-    setDoctors(doctors.filter((doctor) => doctor.id !== id));
+    toast.success("Patient deleted successfully");
+
+    setPatients(patients.filter((patient) => patient.id !== id));
   };
 
   return (
     <>
       {token && (
         <Button asChild variant="outline" className="mb-4 mr-auto block">
-          <Link size="sm" to={`/doctors/create`}>
-            Create New Doctor
-          </Link>
+          <Link to={`/patients/create`}>Create New Patient</Link>
         </Button>
       )}
 
-      {/* Grid of cards */}
+      {/* Grid layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {doctors.map((doctor) => (
-          <Card key={doctor.id} className="shadow-sm">
+        {patients.map((patient) => (
+          <Card key={patient.id} className="shadow-sm">
+
             <CardHeader>
               <CardTitle>
-                {doctor.first_name} {doctor.last_name}
+                {patient.first_name} {patient.last_name}
               </CardTitle>
-              <CardDescription>{doctor.specialisation}</CardDescription>
             </CardHeader>
 
             <CardContent className="text-sm space-y-1">
-              <p>
-                <strong>Email:</strong> {doctor.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {doctor.phone}
-              </p>
+              <p><strong>Email:</strong> {patient.email}</p>
+              <p><strong>Phone:</strong> {patient.phone}</p>
             </CardContent>
 
             {token && (
               <CardFooter className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/doctors/${doctor.id}`)}
-                >
+                <Button variant="outline"
+                  onClick={() => navigate(`/patients/${patient.id}`)}>
                   View
                 </Button>
 
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/doctors/${doctor.id}/edit`)}
-                >
+                <Button variant="outline"
+                  onClick={() => navigate(`/patients/${patient.id}/edit`)}>
                   Edit
                 </Button>
 
                 <DeleteBtn
-                  resource="doctors"
-                  id={doctor.id}
+                  resource="patients"
+                  id={patient.id}
                   onDeleteCallback={onDeleteCallback}
                 />
               </CardFooter>
             )}
+
           </Card>
         ))}
       </div>
