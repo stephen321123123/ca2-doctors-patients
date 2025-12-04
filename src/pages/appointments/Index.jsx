@@ -16,27 +16,45 @@ import {
 
 export default function AppointmentsIndex() {
   const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
+
   const navigate = useNavigate();
   const { token } = useAuth();
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const res = await axios.get("/appointments", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setAppointments(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+ useEffect(() => {
+  const fetchData = async () => {      //wanted to use promise (shorter code) axios was easier
+    try {
+      // Fetch appointments
+      const apptRes = await axios.get("/appointments", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAppointments(apptRes.data);
 
-    fetchAppointments();
-  }, []);
+      // Fetch doctors
+      const docRes = await axios.get("/doctors", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDoctors(docRes.data);
+
+      // Fetch patients
+      const patRes = await axios.get("/patients", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPatients(patRes.data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   const onDeleteCallback = (id) => {
     toast.success("Appointment deleted successfully");
-    setAppointments(appointments.filter(a => a.id !== id));
+    setAppointments(appointments.filter((a) => a.id !== id));
   };
 
   return (
@@ -48,35 +66,54 @@ export default function AppointmentsIndex() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {appointments.map((appt) => (
-          <Card key={appt.id}>
-            <CardHeader>
-              <CardTitle>Appointment #{appt.id}</CardTitle>
-            </CardHeader>
 
-            <CardContent className="space-y-1">
-              <p><strong>Date:</strong> {appt.appointment_date}</p>
-              <p><strong>Doctor ID:</strong> {appt.doctor_id}</p>
-              <p><strong>Patient ID:</strong> {appt.patient_id}</p>
-            </CardContent>
+        {appointments.map((appt) => {
 
-            <CardFooter className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}`)}>
-                View
-              </Button>
+        //find doctor & patient objects by ID
+          const doctor = doctors.find((d) => d.id === appt.doctor_id);
+          const patient = patients.find((p) => p.id === appt.patient_id);
 
-              <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}/edit`)}>
-                Edit
-              </Button>
+          return (
+            <Card key={appt.id}>
+              <CardHeader>
+                <CardTitle>Appointment #{appt.id}</CardTitle>
+              </CardHeader>
 
-              <DeleteBtn
-                resource="appointments"
-                id={appt.id}
-                onDeleteCallback={onDeleteCallback}
-              />
-            </CardFooter>
-          </Card>
-        ))}
+              <CardContent className="space-y-1">
+                <p><strong>Date:</strong> {appt.appointment_date}</p>
+
+                {/* <p><strong>Doctor ID:</strong> {appt.doctor_id}</p> */}     {/* only showed the id */}
+                {/* <p><strong>Patient ID:</strong> {appt.patient_id}</p> */}
+                <p>
+                  <strong>Doctor:</strong>{" "}
+                  {doctor ? `${doctor.first_name} ${doctor.last_name}` : "Loading..."}   {/* shows full name */}
+                </p>
+
+                <p>
+                  <strong>Patient:</strong>{" "}
+                  {patient ? `${patient.first_name} ${patient.last_name}` : "Loading..."}   {/* shows full name */}
+                </p>
+              </CardContent>
+
+              <CardFooter className="flex gap-2">
+                <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}`)}>
+                  View
+                </Button>
+
+                <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}/edit`)}>
+                  Edit
+                </Button>
+
+                <DeleteBtn
+                  resource="appointments"
+                  id={appt.id}
+                  onDeleteCallback={onDeleteCallback}
+                />
+              </CardFooter>
+            </Card>
+          );
+        })}
+
       </div>
     </>
   );
