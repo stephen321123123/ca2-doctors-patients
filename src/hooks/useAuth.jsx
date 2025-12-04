@@ -44,6 +44,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const onRegister = async (first_name, last_name, email, password) => {
+        const options = {
+            method: "POST",
+            url:"/register",
+            data: {
+                first_name,
+                last_name,
+                email,
+                password
+            }
+        }
+    }
+
     const onLogout = () => {
         setToken(null);
         localStorage.removeItem("token");
