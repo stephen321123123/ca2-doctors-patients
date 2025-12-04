@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import axios from "@/config/api";
+
+
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+
 import { useNavigate } from 'react-router';
 import { useAuth } from "@/hooks/useAuth";
 
@@ -47,6 +51,7 @@ export default function Create() {
         }
     };
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(form);
@@ -88,14 +93,25 @@ export default function Create() {
                 value={form.phone} 
                 onChange={handleChange} 
             />
-            <Input 
-                className="mt-2"
-                type="text" 
-                placeholder="Specialisation" 
-                name="specialisation" 
-                value={form.specialisation} 
-                onChange={handleChange} 
-            />
+           <Select
+    onValueChange={(value) =>
+        setForm({ ...form, specialisation: value })
+    }
+    value={form.specialisation}
+>
+    <SelectTrigger className="mt-2">
+        <SelectValue placeholder="Choose Specialisation" />
+    </SelectTrigger>
+
+    <SelectContent>
+        <SelectItem value="Podiatrist">Podiatrist</SelectItem>
+        <SelectItem value="Dermatologist">Dermatologist</SelectItem>
+        <SelectItem value="Pediatrician">Pediatrician</SelectItem>
+        <SelectItem value="Psychiatrist">Psychiatrist</SelectItem>
+        <SelectItem value="General Practitioner">General Practitioner</SelectItem>
+    </SelectContent>
+</Select>
+
             <Button 
                 className="mt-4 cursor-pointer" 
                 variant="outline" 
