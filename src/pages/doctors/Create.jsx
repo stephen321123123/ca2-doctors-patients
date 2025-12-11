@@ -24,7 +24,7 @@ const formSchema = z.object({
     "Psychiatrist",
     "General Practitioner"
   ], {
-    errorMap: () => ({ message: "Please choose a specialisation" })          // custom error message
+    error: () => ({ message: "Please choose a specialisation" })          // custom error message
   })
 });
 

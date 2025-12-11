@@ -15,12 +15,19 @@ import {
 } from "@/components/ui/card";
 
 export default function AppointmentsIndex() {
-  const [appointments, setAppointments] = useState([]);
+ 
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
-
+  const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
   const { token } = useAuth();
+
+  
+  
+  const formatDate = (v) => { // handles seconds vs ms and formats or falls back
+    const d = new Date(Number(v) < 1e12 ? Number(v) * 1000 : Number(v)); // seconds->ms else assume ms
+    return isNaN(d.getTime()) ? String(v) : d.toLocaleString(); // readable or fallback
+  };
 
  useEffect(() => {
   const fetchData = async () => {      //wanted to use promise (shorter code) axios was easier
@@ -80,7 +87,8 @@ export default function AppointmentsIndex() {
               </CardHeader>
 
               <CardContent className="space-y-1">
-                <p><strong>Date:</strong> {appt.appointment_date}</p>
+                 <p><strong>Date:</strong> {formatDate(appt.appointment_date)}</p> {/* calls formatDate */}
+      
 
                 {/* <p><strong>Doctor ID:</strong> {appt.doctor_id}</p> */}     {/* only showed the id */}
                 {/* <p><strong>Patient ID:</strong> {appt.patient_id}</p> */}
