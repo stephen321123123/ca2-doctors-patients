@@ -26,6 +26,7 @@ import AppointmentsCreate from "./pages/appointments/Create";
 import AppointmentsEdit from "./pages/appointments/Edit";
 
 import PrescriptionsIndex from "@/pages/prescriptions/Index";
+import PrescriptionsShow from "@/pages/prescriptions/Show";
 
 
 
@@ -87,6 +88,7 @@ export default function App() {
 
                     <Route path="/" element={<ProtectedRoute />}>
                     <Route path="/prescriptions" element={<PrescriptionsIndex />} />
+                    <Route path="/prescriptions/:id" element={<PrescriptionsShow />} />
                     </Route>
 
 

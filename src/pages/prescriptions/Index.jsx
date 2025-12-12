@@ -78,18 +78,8 @@ export default function Index() {
               <p>
                 <strong>Diagnosis ID:</strong> {prescription.diagnosis_id} {/* diagnosis_id */}
               </p>
-              <p>
-                <strong>Start:</strong> {prescription.start_date} {/* start_date */}
-              </p>
-              <p>
-                <strong>End:</strong> {prescription.end_date} {/* end_date */}
-              </p>
-              <p>
-                <strong>Created:</strong> {String(prescription.createdAt)} {/* createdAt */}
-              </p>
-              <p>
-                <strong>Updated:</strong> {String(prescription.updatedAt)} {/* updatedAt */}
-              </p>
+      
+              
             </CardContent>
 
             {token && (

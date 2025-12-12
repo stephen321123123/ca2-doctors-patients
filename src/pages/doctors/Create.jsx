@@ -72,7 +72,7 @@ export default function CreateDoctor() {
           name="email"
           control={form.control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>                       {/* highlights red */}
+            <Field data-invalid={fieldState.invalid}>                         
               <FieldLabel>Email</FieldLabel>
               <Input {...field} placeholder="doctor@example.com" />         {/* controlled input */}
               {fieldState.error && <FieldError errors={[fieldState.error]} />}  {/* instant error */}
