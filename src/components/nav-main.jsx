@@ -30,7 +30,7 @@ export function NavMain({
     return false
   };
 
-  // console.log(location);
+  console.log(location);
 
   return (
     <SidebarGroup>

@@ -1,106 +1,242 @@
-import { useEffect, useState } from "react"; // React hooks
-import axios from "@/config/api"; // axios instance with baseURL etc
-import { useParams } from 'react-router'; // get :id from route
-import { useAuth } from "@/hooks/useAuth"; // auth token
+import { useEffect, useState } from "react";              // React hooks for state and lifecycle
+import axios from "@/config/api";                          // Preconfigured Axios instance
+import { useParams } from 'react-router';                 // Hook to read URL params (doctor id)
+import { useAuth } from "@/hooks/useAuth";                 // Custom hook to access auth token
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"; // UI components
+} from "@/components/ui/card";                             // UI card components
 
 export default function Show() {
-  const [doctor, setDoctor] = useState(null); // doctor object
-  const [appointments, setAppointments] = useState([]); // list of appointments for this doctor
-  const [patientsMap, setPatientsMap] = useState({}); // map patientId -> patient object
-  const { id } = useParams(); // doctor id from route
-  const { token } = useAuth(); // auth token for API requests
+  const [doctor, setDoctor] = useState(null);              // Stores doctor details
+  const [appointments, setAppointments] = useState([]);   // Stores appointments for this doctor
+  const [patientsMap, setPatientsMap] = useState({});     // Maps patient_id → patient object
+  const [prescriptions, setPrescriptions] = useState([]); // Stores prescriptions for this doctor
 
-  // small helper to format timestamps (handles seconds vs ms) // comment to right
-  const formatDate = (v) => { const d = new Date(Number(v) < 1e12 ? Number(v) * 1000 : Number(v)); return isNaN(d.getTime()) ? String(v) : d.toLocaleString(); }; // reduced helper
+  const { id } = useParams();                              // Doctor ID from route
+  const { token } = useAuth();                             // Auth token for API calls
 
+  // Converts timestamps (seconds or milliseconds) into readable date strings
+  const formatDate = (v) => {
+    const d = new Date(Number(v) < 1e12 ? Number(v) * 1000 : Number(v));
+    return isNaN(d.getTime()) ? String(v) : d.toLocaleString();
+  };
+
+  // Fetch doctor details
   useEffect(() => {
-    if (!id || !token) return; // wait for id/token // comment to right
+    if (!id || !token) return;                             // Prevent API call if missing data
+
     const fetchDoctor = async () => {
       try {
-        const res = await axios.get(`/doctors/${id}`, { headers: { Authorization: `Bearer ${token}` } }); // fetch doctor
-        setDoctor(res.data); // store doctor
+        const res = await axios.get(`/doctors/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },  // Attach auth token
+        });
+        setDoctor(res.data);                               // Save doctor data
       } catch (err) {
-        console.log(err); // log error
+        console.log(err);                                  // Log any error
       }
     };
-    fetchDoctor(); // call fetch
-  }, [id, token]); // re-run if id/token changes
 
+    fetchDoctor();
+  }, [id, token]);                                        // Re-run if id or token changes
+
+  // Fetch appointments and related patients
   useEffect(() => {
-    if (!id || !token) return; // wait for id/token // comment to right
+    if (!id || !token) return;
+
     const fetchAppointmentsAndPatients = async () => {
       try {
-        // fetch appointments for this doctor (endpoint may vary; this uses a query param) // comment to right
-        const apptRes = await axios.get(`/appointments?doctor_id=${id}`, { headers: { Authorization: `Bearer ${token}` } }); // fetch appointments
-        const appts = Array.isArray(apptRes.data) ? apptRes.data : []; // normalize // comment to right
-        setAppointments(appts); // store appointments
+        const apptRes = await axios.get(
+          `/appointments?doctor_id=${id}`,                 // Get appointments for doctor
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-        // collect unique patient ids to avoid duplicate requests // comment to right
-        const patientIds = [...new Set(appts.map(a => a.patient_id).filter(Boolean))]; // unique ids
-        if (patientIds.length === 0) return; // nothing to fetch // comment to right
+        const appts = Array.isArray(apptRes.data)
+          ? apptRes.data.filter(a => Number(a.doctor_id) === Number(id)) // Ensure correct doctor_id, this code is vital
+          : [];
 
-        // fetch all patients in parallel and build a map id->patient // comment to right
-        const patientResponses = await Promise.all(patientIds.map(pid => axios.get(`/patients/${pid}`, { headers: { Authorization: `Bearer ${token}` } })));
+        setAppointments(appts);                            // Store appointments
+
+        const patientIds = [
+          ...new Set(appts.map(a => a.patient_id).filter(Boolean)),
+        ];                                                 // Unique patient IDs
+
+        if (patientIds.length === 0) return;
+
+        const patientResponses = await Promise.all(
+          patientIds.map(pid =>
+            axios.get(`/patients/${pid}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+          )
+        );                                                 // Fetch each patient
+
         const map = {};
-        patientResponses.forEach(r => { const p = r.data; if (p && p.id != null) map[p.id] = p; });
-        setPatientsMap(map); // store map
+        patientResponses.forEach(r => {
+          const p = r.data;
+          if (p && p.id != null) map[p.id] = p;            // Build patient map
+        });
+
+        setPatientsMap(prev => ({ ...prev, ...map }));     // Merge into existing map
       } catch (err) {
-        console.log(err); // log errors
+        console.log(err);
       }
     };
-    fetchAppointmentsAndPatients(); // call fetcher
-  }, [id, token]); // re-run if id/token changes
 
-  if (!doctor) return <p>Loading doctor...</p>; // wait for doctor // comment to right
+    fetchAppointmentsAndPatients();
+  }, [id, token]);
+
+  // Fetch prescriptions and any missing patient records
+  useEffect(() => {
+    if (!id || !token) return;
+
+    const fetchPrescriptions = async () => {
+      try {
+        const res = await axios.get(
+          `/prescriptions?doctor_id=${id}`,                // Get prescriptions for doctor
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const pres = Array.isArray(res.data) 
+        ? res.data.filter(a => Number(a.doctor_id) === Number(id)) // Ensure correct doctor_id, this code is vital
+        : [];
+        setPrescriptions(pres);                            // Store prescriptions
+
+        const patientIds = [
+          ...new Set(pres.map(p => p.patient_id).filter(Boolean)),
+        ];                                                 // Unique patient IDs
+
+        const missing = patientIds.filter(
+          pid => !(patientsMap && patientsMap[pid])
+        );                                                 // Only fetch patients not already loaded
+
+        if (missing.length === 0) return;
+
+        const responses = await Promise.all(
+          missing.map(pid =>
+            axios.get(`/patients/${pid}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+          )
+        );
+
+        const newMap = {};
+        responses.forEach(r => {
+          const p = r.data;
+          if (p && p.id != null) newMap[p.id] = p;         // Build new patient entries
+        });
+
+        setPatientsMap(prev => ({ ...prev, ...newMap }));  // Merge into map
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchPrescriptions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, token]);                                        // patientsMap intentionally omitted
+
+  if (!doctor) return <p>Loading doctor...</p>;            // Loading state
 
   return (
     <>
-      {/* Doctor card (unchanged) */}
+      {/* Doctor details */}
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{doctor.first_name} {doctor.last_name}</CardTitle> {/* doctor name */}
-          <CardDescription>{doctor.specialisation}</CardDescription> {/* specialization */}
+          <CardTitle>
+            {doctor.first_name} {doctor.last_name}
+          </CardTitle>
+          <CardDescription>
+            {doctor.specialisation}
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <p><strong>Email:</strong> {doctor.email}</p> {/* email */}
-          <p><strong>Phone:</strong> {doctor.phone}</p> {/* phone */}
+          <p><strong>Email:</strong> {doctor.email}</p>
+          <p><strong>Phone:</strong> {doctor.phone}</p>
         </CardContent>
       </Card>
 
-      {/* Appointments list: outside the doctor Card */}
-      <Card className="mt-6 w-full max-w-md ">
+      {/* Appointments list */}
+      <Card className="mt-6 w-full max-w-md">
         <CardHeader>
           <CardTitle>Appointments</CardTitle>
         </CardHeader>
-
 
         <CardContent className="space-y-2">
           {appointments.length === 0 ? (
             <p>No appointments found.</p>
           ) : (
-            appointments.map((appt) => {
+            appointments.map(appt => {
               const patient = patientsMap[appt.patient_id];
               const patientName = patient
                 ? `${patient.first_name || ""} ${patient.last_name || ""}`.trim() || patient.name
                 : `Patient #${appt.patient_id}`;
 
               return (
-                <Card key={appt.id} className="w-full">
+                <Card key={appt.id}>
                   <CardHeader>
-                    <CardTitle>{formatDate(appt.appointment_date)}</CardTitle>
-                    <CardDescription>Patient: {patientName}</CardDescription>
+                    <CardTitle>
+                      {formatDate(appt.appointment_date)}
+                    </CardTitle>
+                    <CardDescription>
+                      Patient: {patientName}
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>{appt.notes && <p><strong>Notes:</strong> {appt.notes}</p>}</CardContent>
+
+                  <CardContent>
+                    {appt.notes && (
+                      <p><strong>Notes:</strong> {appt.notes}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Prescriptions list */}
+      <Card className="mt-6 w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Prescriptions</CardTitle>
+        </CardHeader>
+
+        <CardContent className="space-y-2">
+          {prescriptions.length === 0 ? (
+            <p>No prescriptions found.</p>
+          ) : (
+            prescriptions.map(pres => {
+              const patient = patientsMap[pres.patient_id];
+              const patientName = patient
+                ? `${patient.first_name || ""} ${patient.last_name || ""}`.trim() || patient.name
+                : `Patient #${pres.patient_id}`;
+
+              return (
+                <Card key={pres.id}>
+                  <CardHeader>
+                    <CardTitle>
+                      {formatDate(
+                        pres.start_date ?? pres.createdAt ?? pres.updatedAt
+                      )}
+                    </CardTitle>
+                    <CardDescription>
+                      Patient: {patientName}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent>
+                    <p><strong>Medication:</strong> {pres.medication}</p>
+                    {pres.dosage && (
+                      <p><strong>Dosage:</strong> {pres.dosage}</p>
+                    )}
+                    {pres.notes && (
+                      <p><strong>Notes:</strong> {pres.notes}</p>
+                    )}
+                  </CardContent>
                 </Card>
               );
             })
@@ -110,4 +246,3 @@ export default function Show() {
     </>
   );
 }
-
