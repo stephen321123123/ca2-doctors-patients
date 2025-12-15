@@ -11,16 +11,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";      // same UI as Login
 
-// ---------------- ZOD VALIDATION (matches API exactly) ------------------
+// zod schema for form validation
 const formSchema = z.object({
-  email: z.string().email("Invalid email address"),                          // required
-  first_name: z.string().min(2, "Min 2 characters").max(255, "Max 255"),     // required
-  last_name: z.string().min(2, "Min 2 characters").max(255, "Max 255"),      // required
-  phone: z.string().length(10, "Phone must be exactly 10 digits"),           // required 10 characters
-  specialisation: z.enum([                                                   // backend spelling required
+  email: z.string().email("Invalid email address"),                         
+  first_name: z.string().min(2, "Min 2 characters").max(255, "Max 255"),       //requirements
+  last_name: z.string().min(2, "Min 2 characters").max(255, "Max 255"),     
+  phone: z.string().length(10, "Phone must be exactly 10 digits"),          
+  specialisation: z.enum([                                                   
     "Podiatrist",
     "Dermatologist",
-    "Pediatrician",
+    "Pediatrician",           //enum dropdown options
     "Psychiatrist",
     "General Practitioner"
   ], {
@@ -64,10 +64,10 @@ export default function CreateDoctor() {
     <>
       <h1>Create a New Doctor</h1>
 
-      <form onSubmit={form.handleSubmit(submitForm)}>                       {/* RHF submit */}
+      <form onSubmit={form.handleSubmit(submitForm)}>                       
 
         <div className="grid gap-2">
- {/* EMAIL FIELD */}
+ {/* email */}
         <Controller
           name="email"
           control={form.control}
@@ -82,7 +82,7 @@ export default function CreateDoctor() {
             </div>
 
             <div className="grid gap-2">
-             {/* FIRST NAME */}
+             {/* first name */}
         <Controller
           name="first_name"
           control={form.control}
@@ -97,11 +97,7 @@ export default function CreateDoctor() {
             </div>
 
             <div className="grid gap-2">
-            
-            </div>
-
-            <div className="grid gap-2">
-             {/* LAST NAME */}
+             {/* last name */}
         <Controller
           name="last_name"
           control={form.control}
@@ -116,7 +112,7 @@ export default function CreateDoctor() {
             </div>
 
             <div className="grid gap-2">
-            {/* PHONE NUMBER */}
+            {/* phone */}
         <Controller
           name="phone"
           control={form.control}
@@ -130,17 +126,17 @@ export default function CreateDoctor() {
         />
             </div>
 
-             <div className="grid gap-2">    {/**This shows errors as the user types (name must be 2 characters min etc) */}
+             <div className="grid gap-2">   
         <Controller
-          name="specialisation"                                              // matches backend
+          name="specialisation"                                              
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Specialisation</FieldLabel>
 
               <Select
-                value={field.value}                                          // controlled by RHF
-                onValueChange={field.onChange}                               // updates RHF
+                value={field.value}                                      
+                onValueChange={field.onChange}                              
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Choose Specialisation" />         {/* default text */}

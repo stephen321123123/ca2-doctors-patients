@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";              // React hooks for state and lifecycle
-import axios from "@/config/api";                          // Preconfigured Axios instance
-import { useParams } from 'react-router';                 // Hook to read URL params (doctor id)
-import { useAuth } from "@/hooks/useAuth";                 // Custom hook to access auth token
+import { useEffect, useState } from "react";             
+import axios from "@/config/api";                  
+import { useParams } from 'react-router';                
+import { useAuth } from "@/hooks/useAuth";             
 import {
   Card,
   CardContent,
@@ -12,14 +12,14 @@ import {
 
 export default function Show() {
   const [doctor, setDoctor] = useState(null);              // Stores doctor details
-  const [appointments, setAppointments] = useState([]);   // Stores appointments for this doctor
+  const [appointments, setAppointments] = useState([]);   
   const [patientsMap, setPatientsMap] = useState({});     // Maps patient_id → patient object
   const [prescriptions, setPrescriptions] = useState([]); // Stores prescriptions for this doctor
 
   const { id } = useParams();                              // Doctor ID from route
   const { token } = useAuth();                             // Auth token for API calls
 
-  // Converts timestamps (seconds or milliseconds) into readable date strings
+  
   const formatDate = (v) => {
     const d = new Date(Number(v) < 1e12 ? Number(v) * 1000 : Number(v));
     return isNaN(d.getTime()) ? String(v) : d.toLocaleString();
@@ -32,7 +32,7 @@ export default function Show() {
     const fetchDoctor = async () => {
       try {
         const res = await axios.get(`/doctors/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },  // Attach auth token
+          headers: { Authorization: `Bearer ${token}` },  
         });
         setDoctor(res.data);                               // Save doctor data
       } catch (err) {
@@ -47,7 +47,7 @@ export default function Show() {
   useEffect(() => {
     if (!id || !token) return;
 
-    const fetchAppointmentsAndPatients = async () => {
+    const fetchAppointments = async () => {
       try {
         const apptRes = await axios.get(
           `/appointments?doctor_id=${id}`,                 // Get appointments for doctor
@@ -86,7 +86,7 @@ export default function Show() {
       }
     };
 
-    fetchAppointmentsAndPatients();
+    fetchAppointments();
   }, [id, token]);
 
   // Fetch prescriptions and any missing patient records
@@ -136,8 +136,8 @@ export default function Show() {
     };
 
     fetchPrescriptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, token]);                                        // patientsMap intentionally omitted
+   
+  }, [id, token]);                                     
 
   if (!doctor) return <p>Loading doctor...</p>;            // Loading state
 

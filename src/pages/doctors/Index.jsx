@@ -13,48 +13,48 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/components/ui/card";    //ui cards componentss
 
 export default function Index() {
   const [doctors, setDoctors] = useState([]);
-  const navigate = useNavigate();
+  const navigate = useNavigate();          //for changing routes
   const { token } = useAuth();
 
   useEffect(() => {
     const fetchDoctors = async () => {
       const options = {
         method: "GET",
-        url: "/doctors",
+        url: "/doctors",      
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,   //token attached
         },
       };
 
       try {
-        let response = await axios.request(options);
+        let response = await axios.request(options);     //send the request to api
         console.log(response.data);
-        setDoctors(response.data);
+        setDoctors(response.data);                 //doctors set into a state
       } catch (err) {
-        console.log(err);
+        console.log(err);               //error log
       }
     };
 
     fetchDoctors();
-  }, []);
+  }, []);           //run once on mount
 
   const onDeleteCallback = (id) => {
-    toast.success("Doctor deleted successfully");
-    setDoctors(doctors.filter((doctor) => doctor.id !== id));
+    toast.success("Doctor deleted successfully");           //show toast confirmation
+    setDoctors(doctors.filter((doctor) => doctor.id !== id));      //remove the deleted doctor localy
   };
 
   return (
     <>
       {token && (
-        <Button asChild variant="outline" className="mb-4 mr-auto block">
+        <Button asChild variant="outline" className="mb-4 mr-auto block">   
           <Link size="sm" to={`/doctors/create`}>
             Create New Doctor
           </Link>
-        </Button>
+        </Button> //show create IF authenticated
       )}
 
       {/* Grid of cards */}

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 
 export default function Index() {
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState([]);   //list for all patients
   const navigate = useNavigate();
   const { token } = useAuth();
 

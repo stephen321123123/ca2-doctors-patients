@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/card";
 
 export default function AppointmentsIndex() {
- 
-  const [doctors, setDoctors] = useState([]);
-  const [patients, setPatients] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+
+  const [doctors, setDoctors] = useState([]);       //list of all doctors
+  const [patients, setPatients] = useState([]);       //list of all patients
+  const [appointments, setAppointments] = useState([]); //list of all appointments
   const navigate = useNavigate();
   const { token } = useAuth();
 
@@ -36,19 +36,19 @@ export default function AppointmentsIndex() {
       const apptRes = await axios.get("/appointments", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setAppointments(apptRes.data);
+      setAppointments(apptRes.data);    //store my appointments
 
       // Fetch doctors
       const docRes = await axios.get("/doctors", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setDoctors(docRes.data);
+      setDoctors(docRes.data);    //store doctors
 
       // Fetch patients
       const patRes = await axios.get("/patients", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setPatients(patRes.data);
+      setPatients(patRes.data);    //store patients
 
     } catch (err) {
       console.log(err);
@@ -59,9 +59,9 @@ export default function AppointmentsIndex() {
 }, []);
 
 
-  const onDeleteCallback = (id) => {
+  const onDeleteCallback = (id) => {   //delete appt after delete
     toast.success("Appointment deleted successfully");
-    setAppointments(appointments.filter((a) => a.id !== id));
+    setAppointments(appointments.filter((a) => a.id !== id));  //remove from a state
   };
 
   return (
@@ -74,7 +74,7 @@ export default function AppointmentsIndex() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-        {appointments.map((appt) => {
+        {appointments.map((appt) => {   //render each card
 
         //find doctor & patient objects by ID
           const doctor = doctors.find((d) => d.id === appt.doctor_id);

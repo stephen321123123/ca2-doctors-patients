@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axios from "@/config/api";
+import axios from "@/config/api";    //pre configured with the base url
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function EditAppointment() {
   const [form, setForm] = useState({
-    appointment_date: "",
+    appointment_date: "",           //controlled form state
     doctor_id: "",
     patient_id: ""
   });
@@ -26,15 +26,15 @@ export default function EditAppointment() {
         //Load dropdown data
         const doctorRes = await axios.get("/doctors");
         const patientRes = await axios.get("/patients");
-        const apptRes = await axios.get(`/appointments/${id}`);
+        const apptRes = await axios.get(`/appointments/${id}`);    //fetch appt,doc and pats
 
-        setDoctors(doctorRes.data);
+        setDoctors(doctorRes.data);      //setting the possible options
         setPatients(patientRes.data);
 
         //Pre-fill form with appointment data
         setForm({
           appointment_date: apptRes.data.appointment_date,
-          doctor_id: apptRes.data.doctor_id,
+          doctor_id: apptRes.data.doctor_id,    //referenced id
           patient_id: apptRes.data.patient_id
         });
       } catch (err) {
@@ -43,7 +43,7 @@ export default function EditAppointment() {
     };
 
     loadData();
-  }, []);
+  }, []);    //run on mount (inital render)
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -100,9 +100,9 @@ export default function EditAppointment() {
       await axios.patch(`/appointments/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      navigate("/appointments");
+      navigate("/appointments");  //after success, navigate to appointments
     } catch (err) {
-      console.log(err);
+      console.log(err);  //logs api errors
     }
   }
 }
