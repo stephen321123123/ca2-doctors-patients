@@ -28,6 +28,9 @@ import AppointmentsEdit from "./pages/appointments/Edit";
 import PrescriptionsIndex from "@/pages/prescriptions/Index";
 import PrescriptionsShow from "@/pages/prescriptions/Show";
 
+import DiagnosesIndex from "@/pages/diagnoses/Index";
+
+
 
 
 import FormExamples from "@/pages/examples/Forms";
@@ -89,6 +92,11 @@ export default function App() {
                     <Route path="/" element={<ProtectedRoute />}>
                     <Route path="/prescriptions" element={<PrescriptionsIndex />} />
                     <Route path="/prescriptions/:id" element={<PrescriptionsShow />} />
+                    </Route>
+
+                    <Route path="/" element={<ProtectedRoute />}>
+                    <Route path="/diagnoses" element={<DiagnosesIndex />} />
+                    
                     </Route>
 
 
