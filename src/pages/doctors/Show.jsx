@@ -1,69 +1,64 @@
-import { useEffect, useState } from "react";             
-import axios from "@/config/api";                  
-import { useParams } from 'react-router';                
-import { useAuth } from "@/hooks/useAuth";             
+import { useEffect, useState } from "react";
+import axios from "@/config/api";
+import { useParams } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";                             // UI card components
+} from "@/components/ui/card";
 
 export default function Show() {
-  const [doctor, setDoctor] = useState(null);              // Stores doctor details
-  const [appointments, setAppointments] = useState([]);   
-  const [patientsMap, setPatientsMap] = useState({});     // Maps patient_id → patient object
-  const [prescriptions, setPrescriptions] = useState([]); // Stores prescriptions for this doctor
+  const [doctor, setDoctor] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [patientsMap, setPatientsMap] = useState({});
+  const [prescriptions, setPrescriptions] = useState([]);
 
-  const { id } = useParams();                              // Doctor ID from route
-  const { token } = useAuth();                             // Auth token for API calls
+  const { id } = useParams();
+  const { token } = useAuth();
 
-  
   const formatDate = (v) => {
     const d = new Date(Number(v) < 1e12 ? Number(v) * 1000 : Number(v));
     return isNaN(d.getTime()) ? String(v) : d.toLocaleString();
   };
 
-  // Fetch doctor details
   useEffect(() => {
-    if (!id || !token) return;                             // Prevent API call if missing data
+    if (!id || !token) return;
 
     const fetchDoctor = async () => {
       try {
         const res = await axios.get(`/doctors/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },  
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setDoctor(res.data);                               // Save doctor data
+        setDoctor(res.data);
       } catch (err) {
-        console.log(err);                                  // Log any error
+        console.log(err);
       }
     };
 
     fetchDoctor();
-  }, [id, token]);                                        // Re-run if id or token changes
+  }, [id, token]);
 
-  // Fetch appointments and related patients
   useEffect(() => {
     if (!id || !token) return;
 
     const fetchAppointments = async () => {
       try {
         const apptRes = await axios.get(
-          `/appointments?doctor_id=${id}`,                 // Get appointments for doctor
+          `/appointments?doctor_id=${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const appts = Array.isArray(apptRes.data)
-          ? apptRes.data.filter(a => Number(a.doctor_id) === Number(id)) // Ensure correct doctor_id, this code is vital
+          ? apptRes.data.filter(a => Number(a.doctor_id) === Number(id))
           : [];
 
-        setAppointments(appts);                            // Store appointments
+        setAppointments(appts);
 
-        const patientIds = [
-          ...new Set(appts.map(a => a.patient_id).filter(Boolean)),
-        ];                                                 // Unique patient IDs
-
+        const patientIds = [...new Set(appts.map(a => a.patient_id).filter(Boolean))];
         if (patientIds.length === 0) return;
 
         const patientResponses = await Promise.all(
@@ -72,15 +67,15 @@ export default function Show() {
               headers: { Authorization: `Bearer ${token}` },
             })
           )
-        );                                                 // Fetch each patient
+        );
 
         const map = {};
         patientResponses.forEach(r => {
           const p = r.data;
-          if (p && p.id != null) map[p.id] = p;            // Build patient map
+          if (p && p.id != null) map[p.id] = p;
         });
 
-        setPatientsMap(prev => ({ ...prev, ...map }));     // Merge into existing map
+        setPatientsMap(prev => ({ ...prev, ...map }));
       } catch (err) {
         console.log(err);
       }
@@ -89,29 +84,24 @@ export default function Show() {
     fetchAppointments();
   }, [id, token]);
 
-  // Fetch prescriptions and any missing patient records
   useEffect(() => {
     if (!id || !token) return;
 
     const fetchPrescriptions = async () => {
       try {
         const res = await axios.get(
-          `/prescriptions?doctor_id=${id}`,                // Get prescriptions for doctor
+          `/prescriptions?doctor_id=${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const pres = Array.isArray(res.data) 
-        ? res.data.filter(a => Number(a.doctor_id) === Number(id)) // Ensure correct doctor_id, this code is vital
-        : [];
-        setPrescriptions(pres);                            // Store prescriptions
+        const pres = Array.isArray(res.data)
+          ? res.data.filter(p => Number(p.doctor_id) === Number(id))
+          : [];
 
-        const patientIds = [
-          ...new Set(pres.map(p => p.patient_id).filter(Boolean)),
-        ];                                                 // Unique patient IDs
+        setPrescriptions(pres);
 
-        const missing = patientIds.filter(
-          pid => !(patientsMap && patientsMap[pid])
-        );                                                 // Only fetch patients not already loaded
+        const patientIds = [...new Set(pres.map(p => p.patient_id).filter(Boolean))];
+        const missing = patientIds.filter(pid => !patientsMap[pid]);
 
         if (missing.length === 0) return;
 
@@ -126,58 +116,66 @@ export default function Show() {
         const newMap = {};
         responses.forEach(r => {
           const p = r.data;
-          if (p && p.id != null) newMap[p.id] = p;         // Build new patient entries
+          if (p && p.id != null) newMap[p.id] = p;
         });
 
-        setPatientsMap(prev => ({ ...prev, ...newMap }));  // Merge into map
+        setPatientsMap(prev => ({ ...prev, ...newMap }));
       } catch (err) {
         console.log(err);
       }
     };
 
     fetchPrescriptions();
-   
-  }, [id, token]);                                     
+  }, [id, token]);
 
-  if (!doctor) return <p>Loading doctor...</p>;            // Loading state
+  if (!doctor) {
+    return <p className="text-sm text-muted-foreground">Loading doctor...</p>;
+  }
 
   return (
-    <>
-      {/* Doctor details */}
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>
+    <div className=" w-full max-w-6xl space-y-8 py-4">
+      {/* Doctor Details */}
+      <Card className="w-full max-w-lg shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl">
             {doctor.first_name} {doctor.last_name}
           </CardTitle>
-          <CardDescription>
-            {doctor.specialisation}
-          </CardDescription>
+          <CardDescription>{doctor.specialisation}</CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="grid gap-2 text-sm">
           <p><strong>Email:</strong> {doctor.email}</p>
           <p><strong>Phone:</strong> {doctor.phone}</p>
         </CardContent>
       </Card>
 
-     
-          <CardTitle>Appointments</CardTitle>
-     
+      {/* Appointments */}
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-lg font-semibold">Appointments</h2>
+          <p className="text-sm text-muted-foreground">
+            Appointments handled by this doctor.
+          </p>
+        </div>
 
-        <CardContent className="space-y-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {appointments.length === 0 ? (
-            <p>No appointments found.</p>
-          ) : (
-            appointments.map(appt => {
+        {appointments.length === 0 ? (
+          <Card className="shadow-sm">
+            <CardContent className="py-6 text-sm text-muted-foreground">
+              No appointments found.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {appointments.map(appt => {
               const patient = patientsMap[appt.patient_id];
               const patientName = patient
                 ? `${patient.first_name || ""} ${patient.last_name || ""}`.trim() || patient.name
                 : `Patient #${appt.patient_id}`;
 
               return (
-                <Card key={appt.id}>
-                  <CardHeader>
-                    <CardTitle>
+                <Card key={appt.id} className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">
                       {formatDate(appt.appointment_date)}
                     </CardTitle>
                     <CardDescription>
@@ -185,36 +183,45 @@ export default function Show() {
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent>
-                    {appt.notes && (
+                  {appt.notes && (
+                    <CardContent className="pt-0 text-sm">
                       <p><strong>Notes:</strong> {appt.notes}</p>
-                    )}
-                  </CardContent>
+                    </CardContent>
+                  )}
                 </Card>
               );
-            })
-          )}
-        </CardContent>
-  
-<CardTitle>Prescriptions</CardTitle>
-      {/* Prescriptions list */}
-     
-        
+            })}
+          </div>
+        )}
+      </div>
 
-        <CardContent className="space-y-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {prescriptions.length === 0 ? (
-            <p>No prescriptions found.</p>
-          ) : (
-            prescriptions.map(pres => {
+      {/* Prescriptions */}
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-lg font-semibold">Prescriptions</h2>
+          <p className="text-sm text-muted-foreground">
+            Prescriptions issued by this doctor.
+          </p>
+        </div>
+
+        {prescriptions.length === 0 ? (
+          <Card className="shadow-sm">
+            <CardContent className="py-6 text-sm text-muted-foreground">
+              No prescriptions found.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {prescriptions.map(pres => {
               const patient = patientsMap[pres.patient_id];
               const patientName = patient
                 ? `${patient.first_name || ""} ${patient.last_name || ""}`.trim() || patient.name
                 : `Patient #${pres.patient_id}`;
 
               return (
-                <Card key={pres.id}>
-                  <CardHeader>
-                    <CardTitle>
+                <Card key={pres.id} className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">
                       {formatDate(
                         pres.start_date ?? pres.createdAt ?? pres.updatedAt
                       )}
@@ -224,21 +231,17 @@ export default function Show() {
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent>
+                  <CardContent className="pt-0 text-sm space-y-1">
                     <p><strong>Medication:</strong> {pres.medication}</p>
-                    {pres.dosage && (
-                      <p><strong>Dosage:</strong> {pres.dosage}</p>
-                    )}
-                    {pres.notes && (
-                      <p><strong>Notes:</strong> {pres.notes}</p>
-                    )}
+                    {pres.dosage && <p><strong>Dosage:</strong> {pres.dosage}</p>}
+                    {pres.notes && <p><strong>Notes:</strong> {pres.notes}</p>}
                   </CardContent>
                 </Card>
               );
-            })
-          )}
-        </CardContent>
-      
-    </>
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

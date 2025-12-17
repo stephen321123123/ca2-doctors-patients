@@ -90,19 +90,12 @@ export default function AppointmentsIndex() {
                   text={`Appointment # ${appt.id}`}
                   splitType="chars"
                   delay={20}
-                  duration={0.2}
+                  duration={2}
                   from={{ opacity: 0 }}
                   to={{ opacity: 1 }}
                   ease="power3.out"
                 />
               </CardHeader>
-
-            
-
-
-
-
-
 
               <CardContent className="space-y-1">
                  <p><strong>Date:</strong> {formatDate(appt.appointment_date)}</p> {/* calls formatDate */}
@@ -122,21 +115,7 @@ export default function AppointmentsIndex() {
               </CardContent>
 
               <CardFooter className="flex gap-2">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <Button
-                  variant="outline"
-                  onClick={() => navigate(`/appointments/${appt.id}`)}
-                >
-                  View
-                </Button>
-                </motion.div>
                 
-
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}

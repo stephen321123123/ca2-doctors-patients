@@ -99,7 +99,7 @@ export default function Index() {
                   text={`Diagnosis Date: ${formatDate(diagnose.diagnosis_date)}`}
                   splitType="chars"
                   delay={20}
-                  duration={0.2}
+                  duration={2}
                   from={{ opacity: 0 }}
                   to={{ opacity: 1 }}
                   ease="power3.out"

@@ -70,7 +70,7 @@ export default function Index() {
                   text={`${prescription.medication} `}
                   splitType="chars"
                   delay={20}
-                  duration={0.2}
+                  duration={2}
                   from={{ opacity: 0 }}
                   to={{ opacity: 1 }}
                   ease="power3.out"
@@ -99,21 +99,6 @@ export default function Index() {
 
             {token && (
               <CardFooter className="flex gap-2">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <Button
-                  variant="outline"
-                  onClick={() => navigate(`/${prescription.id}`)}
-                >
-                  View
-                </Button>
-                </motion.div>
-                
-
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
