@@ -6,6 +6,7 @@ import DeleteBtn from "@/components/DeleteBtn";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import SplitText from "@/components/SplitText";
+import AnimatedContent from "@/components/AnimatedContent";
 
 import {
   Card,
@@ -111,11 +112,24 @@ export default function Index() {
                   Edit
                 </Button>
 
+                <AnimatedContent
+                playOnMount
+                  distance={50}
+                  direction="horizontal"
+                  reverse={false}
+                  duration={1.2}
+                  ease="bounce.out"
+                  initialOpacity={1}
+                  animateOpacity
+                  scale={1}
+                  delay={0.1}
+                >
                 <DeleteBtn
                   resource="prescriptions"
                   id={prescription.id}
                   onDeleteCallback={onDeleteCallback}
                 />
+                </AnimatedContent>
               </CardFooter>
             )}
           </Card>

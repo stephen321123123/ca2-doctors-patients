@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import SplitText from "@/components/SplitText";
 import AnimatedContent from "@/components/AnimatedContent"; 
 
+
 import {
   Card,
   CardHeader,
@@ -107,6 +108,7 @@ export default function Index() {
                 </Button>
 
                 <AnimatedContent
+                playOnMount
                   distance={50}
                   direction="horizontal"
                   reverse={false}
@@ -114,9 +116,8 @@ export default function Index() {
                   ease="bounce.out"
                   initialOpacity={1}
                   animateOpacity
-                  scale={1.1}
-                  
-                  delay={0.3}
+                  scale={1}
+                  delay={0.1}
                 >
                 <DeleteBtn
                   resource="doctors"
