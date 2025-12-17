@@ -1,23 +1,13 @@
-import * as React from "react";
-import {
-  IconConfetti,
-  IconTheater,
-  IconDashboard,
-  IconMicrophone2,
-  IconInnerShadowTop,
-  IconMusic,
-  IconListCheck,
-  IconBrandSpotify,
-  
-} from "@tabler/icons-react";
+import { useEffect } from "react";
+import { useLocation } from "react-router";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { useLocation } from "react-router";
-import { useEffect } from "react";
+
+import { useAuth } from "@/hooks/useAuth";
 
 import { NavMain } from "@/components/nav-main";
-import { NavExamples } from "@/components/nav-examples";
 import { NavUser } from "@/components/nav-user";
+
 import {
   Sidebar,
   SidebarContent,
@@ -28,12 +18,16 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+import {
+  IconDashboard,
+  IconConfetti,
+  IconTheater,
+  IconMicrophone2,
+  IconBrandSpotify,
+} from "@tabler/icons-react";
+
+/* Sidebar navigation config (unchanged, just without hard-coded user) */
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -66,38 +60,27 @@ const data = {
       icon: IconDashboard,
     },
   ],
-  examples: [
-    {
-      name: "Forms & Validation",
-      url: "/forms",
-      icon: IconListCheck,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }) {
   const location = useLocation();
+  const { user } = useAuth();
 
-  console.log(location);
-
-  let message = location.state?.message;
-  let type = location.state?.type;
+  const message = location.state?.message;
+  const type = location.state?.type;
 
   useEffect(() => {
     if (message) {
-      if (type === "error") {
-        toast.error(message);
-      } else if (type === "success") {
-        toast.success(message);
-      } else {
-        toast(message);
-      }
+      if (type === "error") toast.error(message);
+      else if (type === "success") toast.success(message);
+      else toast(message);
     }
-  }, [message]);
+  }, [message, type]);
 
   return (
     <>
       <Toaster position="top-center" richColors />
+
       <Sidebar collapsible="offcanvas" {...props}>
         <SidebarHeader>
           <SidebarMenu>
@@ -105,21 +88,22 @@ export function AppSidebar({ ...props }) {
               <SidebarMenuButton
                 asChild
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
-              >
-                <a href="#">
-                  <IconInnerShadowTop className="!size-5" />
-                  <span className="text-base font-semibold">Acme Inc.</span>
-                </a>
-              </SidebarMenuButton>
+              />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
+
         <SidebarContent>
           <NavMain items={data.navMain} />
-          <NavExamples items={data.examples} />
         </SidebarContent>
+
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser
+            user={{
+              name: user?.first_name || "User",
+              email: user?.email || "",
+            }}
+          />
         </SidebarFooter>
       </Sidebar>
     </>

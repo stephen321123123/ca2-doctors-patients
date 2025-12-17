@@ -1,130 +1,178 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "@/config/api";
-import { useNavigate } from "react-router";
-import { useParams } from "react-router";   //route param helper
+import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 
+import { useForm, Controller } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+
+/* SAME schema as Create */
+const formSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  first_name: z.string().min(2, "Min 2 characters").max(255),
+  last_name: z.string().min(2, "Min 2 characters").max(255),
+  phone: z.string().length(10, "Phone must be exactly 10 digits"),
+  specialisation: z.enum(
+    [
+      "Podiatrist",
+      "Dermatologist",
+      "Pediatrician",
+      "Psychiatrist",
+      "General Practitioner",
+    ],
+    {
+      error: () => ({ message: "Please choose a specialisation" }),
+    }
+  ),
+});
+
 export default function Edit() {
-  const [form, setForm] = useState({
-    first_name: "",    //controlled form
-    last_name: "",
-    email: "",
-    phone: "",
-    specialisation: "",
+  const { token } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      specialisation: "",
+    },
+    mode: "onChange",
   });
 
-  const { token } = useAuth();   //token needed
-  const { id } = useParams();
-
+  /* LOAD DOCTOR + PREFILL FORM */
   useEffect(() => {
     const fetchDoctor = async () => {
-      const options = {
-        method: "GET",
-        url: `/doctors/${id}`,     //fetches single doctor
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       try {
-        let response = await axios.request(options);    //request sent 
-        let doctor = response.data;
-        console.log(doctor);
-
-        setForm({
-          first_name: doctor.first_name,    //populating the form fields
-          last_name: doctor.last_name,
-          email: doctor.email,
-          phone: doctor.phone,
-          specialisation: doctor.specialisation,
+        const res = await axios.get(`/doctors/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
+        form.reset(res.data); // populate React hook form form
       } catch (err) {
-        console.log(err);       
+        console.log(err);
       }
     };
 
-    fetchDoctor();
-  }, []);          //again runs once on mount (initial render)
+    if (token && id) fetchDoctor();
+  }, [token, id, form]);
 
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,    //update the form fields
-    });
-  };
-
-  const updateDoctor = async () => {
-    const options = {
-      method: "PATCH",
-      url: `/doctors/${id}`,    //endpoint to update doctor on id
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: form,    //send the updated data
-    };
-
+  const submitForm = async (data) => {
     try {
-      let response = await axios.request(options);
-      console.log(response.data);
-      navigate("/doctors");       //navigate back to doctors on success
+      await axios.patch(`/doctors/${id}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      navigate("/doctors");
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();       //prevents a default form submission
-    updateDoctor();     //updates api data
-  };
-
   return (
     <>
       <h1>Update Doctor</h1>
-      <form onSubmit={handleSubmit}>
-        <Input
-          type="text"
-          placeholder="First Name"
+
+      <form onSubmit={form.handleSubmit(submitForm)}>
+        {/* FIRST NAME */}
+        <Controller
           name="first_name"
-          value={form.first_name}
-          onChange={handleChange}
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>First Name</FieldLabel>
+              <Input {...field} />
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Last Name"
+
+        {/* LAST NAME */}
+        <Controller
           name="last_name"
-          value={form.last_name}
-          onChange={handleChange}
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Last Name</FieldLabel>
+              <Input {...field} />
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <Input
-          className="mt-2"
-          type="email"
-          placeholder="Email"
+
+        {/* EMAIL */}
+        <Controller
           name="email"
-          value={form.email}
-          onChange={handleChange}
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Email</FieldLabel>
+              <Input {...field} />
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Phone"
+
+        {/* PHONE */}
+        <Controller
           name="phone"
-          value={form.phone}
-          onChange={handleChange}
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Phone</FieldLabel>
+              <Input {...field} />
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Specialisation"
+
+        {/* SPECIALISATION DROPDOWN (same as Create) */}
+        <Controller
           name="specialisation"
-          value={form.specialisation}
-          onChange={handleChange}
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Specialisation</FieldLabel>
+
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose Specialisation" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="Podiatrist">Podiatrist</SelectItem>
+                  <SelectItem value="Dermatologist">Dermatologist</SelectItem>
+                  <SelectItem value="Pediatrician">Pediatrician</SelectItem>
+                  <SelectItem value="Psychiatrist">Psychiatrist</SelectItem>
+                  <SelectItem value="General Practitioner">
+                    General Practitioner
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
+
         <Button className="mt-4 cursor-pointer" variant="outline" type="submit">
           Submit
         </Button>

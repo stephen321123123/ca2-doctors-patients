@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router";
 
 import { useForm, Controller } from "react-hook-form";
 import * as z from "zod";
@@ -130,6 +131,16 @@ export default function LoginForm() {
         >
           Login
         </Button>
+        <Button
+  variant="outline"
+  className="w-full"
+  asChild
+>
+  <Link to="/register">
+    Create an account
+  </Link>
+</Button>
+
       </CardFooter>
     </Card>
   );

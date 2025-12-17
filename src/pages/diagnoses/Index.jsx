@@ -49,10 +49,33 @@ export default function Index() {
     fetchDiagnoses();
   }, []);           //run once on mount
 
+  useEffect(() => {
+  const fetchPatients = async () => {
+    try {
+      const res = await axios.get("/patients", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPatients(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (token) fetchPatients();
+}, [token]);
+
   const onDeleteCallback = (id) => {
     toast.success("Diagnose deleted successfully");           //show toast confirmation
     setDiagnoses(diagnoses.filter((diagnose) => diagnose.id !== id));      //remove the deleted Diagnose localy
   };
+
+  const getPatientName = (patientId) => {
+  const patient = patients.find((p) => p.id === patientId);
+  return patient
+    ? `${patient.first_name} ${patient.last_name}`
+    : `Patient #${patientId}`;
+};
+
 
   return (
     <>
@@ -78,7 +101,7 @@ export default function Index() {
             <CardContent className="text-sm space-y-1">
                 
               <p>
-                <strong>Patient ID:</strong> {diagnose.patient_id}
+                <strong>Patient:</strong> {getPatientName(diagnose.patient_id)}
               </p>
               <p>
                 <strong>Condition:</strong> {diagnose.condition}

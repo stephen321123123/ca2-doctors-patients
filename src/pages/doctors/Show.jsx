@@ -160,13 +160,11 @@ export default function Show() {
         </CardContent>
       </Card>
 
-      {/* Appointments list */}
-      <Card className="mt-6 w-full max-w-md">
-        <CardHeader>
+     
           <CardTitle>Appointments</CardTitle>
-        </CardHeader>
+     
 
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {appointments.length === 0 ? (
             <p>No appointments found.</p>
           ) : (
@@ -197,15 +195,13 @@ export default function Show() {
             })
           )}
         </CardContent>
-      </Card>
-
+  
+<CardTitle>Prescriptions</CardTitle>
       {/* Prescriptions list */}
-      <Card className="mt-6 w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Prescriptions</CardTitle>
-        </CardHeader>
+     
+        
 
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {prescriptions.length === 0 ? (
             <p>No prescriptions found.</p>
           ) : (
@@ -242,7 +238,7 @@ export default function Show() {
             })
           )}
         </CardContent>
-      </Card>
+      
     </>
   );
 }

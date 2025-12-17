@@ -8,6 +8,9 @@ import { SiteHeader } from "@/components/site-header";
 
 import Navbar from "@/components/Navbar";
 import Home from "@/pages/Home";
+import LoginForm from "@/components/LoginForm";
+
+import Register from "@/components/Register";
 import ProtectedRoute from "@/pages/ProtectedRoute";
 
 import DoctorsIndex from "@/pages/doctors/Index";
@@ -27,10 +30,13 @@ import AppointmentsEdit from "./pages/appointments/Edit";
 
 import PrescriptionsIndex from "@/pages/prescriptions/Index";
 import PrescriptionsShow from "@/pages/prescriptions/Show";
+import PrescriptionsCreate from "@/pages/prescriptions/Create";
+import PrescriptionsEdit from "@/pages/prescriptions/Edit";
 
 import DiagnosesIndex from "@/pages/diagnoses/Index";
-
-
+import DiagnosesShow from "@/pages/diagnoses/Show";
+import DiagnosesCreate from "@/pages/diagnoses/Create";
+import DiagnosesEdit from "@/pages/diagnoses/Edit";
 
 
 import FormExamples from "@/pages/examples/Forms";
@@ -56,26 +62,17 @@ export default function App() {
                   {/* Main content */}
                   <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<LoginForm />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/doctors" element={<DoctorsIndex />} />
 
                     <Route path="/" element={<ProtectedRoute />}>
-                      <Route
-                        path="/doctors/:id"
-                        element={<DoctorsShow />}
-                      />
-                      <Route
-                        path="/doctors/:id/edit"
-                        element={<DoctorsEdit />}
-                      />
-                      <Route
-                        path="/doctors/create"
-                        element={<DoctorsCreate />}
-                      />
-
-                     
+                      <Route path="/doctors/:id" element={<DoctorsShow />} />
+                      <Route path="/doctors/:id/edit" element={<DoctorsEdit />}/>                                        
+                      <Route path="/doctors/create" element={<DoctorsCreate />}/>                   
                     </Route>
-                    <Route path="/" element={<ProtectedRoute />}>
 
+                    <Route path="/" element={<ProtectedRoute />}>
                     <Route path="/patients" element={<PatientsIndex />} />
                     <Route path="/patients/:id" element={<PatientsShow />} />
                     <Route path="/patients/:id/edit" element={<PatientsEdit />} />
@@ -92,18 +89,17 @@ export default function App() {
                     <Route path="/" element={<ProtectedRoute />}>
                     <Route path="/prescriptions" element={<PrescriptionsIndex />} />
                     <Route path="/prescriptions/:id" element={<PrescriptionsShow />} />
+                    <Route path="/prescriptions/:id/edit" element={<PrescriptionsEdit />} />
+                    <Route path="/prescriptions/create" element={<PrescriptionsCreate />} />
                     </Route>
 
                     <Route path="/" element={<ProtectedRoute />}>
                     <Route path="/diagnoses" element={<DiagnosesIndex />} />
-                    
+                    <Route path="/diagnoses/:id" element={<DiagnosesShow />} />
+                    <Route path="/diagnoses/:id/edit" element={<DiagnosesEdit />} />
+                    <Route path="/diagnoses/create" element={<DiagnosesCreate />} />
                     </Route>
-
-
-                    
-
-                    
-
+                
                     <Route path="/forms" element={<FormExamples />} />
                   </Routes>
                 </div>

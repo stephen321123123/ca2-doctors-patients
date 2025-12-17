@@ -17,6 +17,9 @@ export default function ShowPrescription() {
   const { id } = useParams(); // prescription id from route
   const { token } = useAuth(); // auth token for API requests
 
+
+
+
   useEffect(() => {
     const fetchAll = async () => {
       try {

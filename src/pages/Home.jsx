@@ -6,9 +6,7 @@ export default function Home() {
     const { token } = useAuth();
     return (
         <>
-            
-            {!token && <LoginForm />}
-            
+            {!token && <LoginForm />} 
         </>
     );
 };
