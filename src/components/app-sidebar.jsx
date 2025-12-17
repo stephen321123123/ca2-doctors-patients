@@ -20,10 +20,12 @@ import {
 
 import {
   IconDashboard,
-  IconConfetti,
-  IconTheater,
-  IconMicrophone2,
-  IconBrandSpotify,
+  
+  IconNurse,
+  IconMoodSick,
+  IconCalendarWeekFilled,
+  IconMedicineSyrup,
+  IconVirus,
 } from "@tabler/icons-react";
 
 /* Sidebar navigation config (unchanged, just without hard-coded user) */
@@ -36,31 +38,47 @@ const data = {
     },
     {
       title: "Doctors",
-      url: "/doctors",
-      icon: IconConfetti,
+      icon: IconNurse,
+      items: [
+        { title: "View Doctors", url: "/doctors" },
+        { title: "Create Doctor", url: "/doctors/create" },
+      ],
     },
     {
       title: "Patients",
-      url: "/patients",
-      icon: IconTheater,
+      icon: IconMoodSick,
+      items: [
+        { title: "View Patients", url: "/patients" },
+        { title: "Create Patient", url: "/patients/create" },
+      ],
     },
     {
       title: "Appointments",
-      url: "/appointments",
-      icon: IconMicrophone2,
+      icon: IconCalendarWeekFilled,
+      items: [
+        { title: "View Appointments", url: "/appointments" },
+        { title: "Create Appointment", url: "/appointments/create" },
+      ],
     },
     {
       title: "Prescriptions",
-      url: "/prescriptions",
-      icon: IconBrandSpotify,
+      icon: IconMedicineSyrup,
+      items: [
+        { title: "View Prescriptions", url: "/prescriptions" },
+        { title: "Create Prescription", url: "/prescriptions/create" },
+      ],
     },
     {
       title: "Diagnoses",
-      url: "/diagnoses",
-      icon: IconDashboard,
+      icon: IconVirus,
+      items: [
+        { title: "View Diagnoses", url: "/diagnoses" },
+        { title: "Create Diagnosis", url: "/diagnoses/create" },
+      ],
     },
   ],
 };
+
 
 export function AppSidebar({ ...props }) {
   const location = useLocation();
