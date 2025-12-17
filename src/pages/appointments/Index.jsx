@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import DeleteBtn from "@/components/DeleteBtn";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import SplitText from "@/components/SplitText";
 
 import {
   Card,
@@ -83,8 +84,23 @@ export default function AppointmentsIndex() {
           return (
             <Card key={appt.id}>
               <CardHeader>
-                <CardTitle>Appointment #{appt.id}</CardTitle>
+                <SplitText
+                  text={`Appointment # ${appt.id}`}
+                  splitType="chars"
+                  delay={20}
+                  duration={0.2}
+                  from={{ opacity: 0 }}
+                  to={{ opacity: 1 }}
+                  ease="power3.out"
+                />
               </CardHeader>
+
+            
+
+
+
+
+
 
               <CardContent className="space-y-1">
                  <p><strong>Date:</strong> {formatDate(appt.appointment_date)}</p> {/* calls formatDate */}

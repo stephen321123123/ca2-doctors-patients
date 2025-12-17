@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import DeleteBtn from "@/components/DeleteBtn";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import SplitText from "@/components/SplitText";
 
 import {
   Card,
@@ -61,9 +62,21 @@ export default function Index() {
 
             <CardHeader>
               <CardTitle>
-                {patient.first_name} {patient.last_name}
+                <SplitText
+                  text={`${patient.first_name} ${patient.last_name}`}
+                  splitType="chars"
+                  delay={20}
+                  duration={0.2}
+                  from={{ opacity: 0 }}
+                  to={{ opacity: 1 }}
+                  ease="power3.out"
+                />
               </CardTitle>
             </CardHeader>
+
+            
+
+            
 
             <CardContent className="text-sm space-y-1">
               <p><strong>Email:</strong> {patient.email}</p>

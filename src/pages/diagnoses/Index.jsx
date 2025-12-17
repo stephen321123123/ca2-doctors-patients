@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import DeleteBtn from "@/components/DeleteBtn";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import SplitText from "@/components/SplitText";
 
 import {
   Card,
@@ -92,10 +93,15 @@ export default function Index() {
         {diagnoses.map((diagnose) => (
           <Card key={diagnose.id} className="shadow-sm">
             <CardHeader>
-              <p>
-                <strong>Diagnosis Date:</strong>{" "}
-                {formatDate(diagnose.diagnosis_date)}
-            </p>
+               <SplitText
+                  text={`Diagnosis Date: ${formatDate(diagnose.diagnosis_date)}`}
+                  splitType="chars"
+                  delay={20}
+                  duration={0.2}
+                  from={{ opacity: 0 }}
+                  to={{ opacity: 1 }}
+                  ease="power3.out"
+                />
             </CardHeader>
 
             <CardContent className="text-sm space-y-1">

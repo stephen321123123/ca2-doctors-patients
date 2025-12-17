@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import DeleteBtn from "@/components/DeleteBtn";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import SplitText from "@/components/SplitText";
+import AnimatedContent from "@/components/AnimatedContent"; 
 
 import {
   Card,
@@ -14,6 +16,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";    //ui cards componentss
+
+// console.log(import.meta.env.VITE_CALENDARIFIC_API_KEY);       //checking api key works 
 
 export default function Index() {
   const [doctors, setDoctors] = useState([]);
@@ -63,8 +67,17 @@ export default function Index() {
           <Card key={doctor.id} className="shadow-sm">
             <CardHeader>
               <CardTitle>
-                {doctor.first_name} {doctor.last_name}
+                <SplitText
+                  text={`${doctor.first_name} ${doctor.last_name}`}
+                  splitType="chars"
+                  delay={20}
+                  duration={0.2}
+                  from={{ opacity: 0 }}
+                  to={{ opacity: 1 }}
+                  ease="power3.out"
+                />
               </CardTitle>
+
               <CardDescription>{doctor.specialisation}</CardDescription>
             </CardHeader>
 
@@ -93,11 +106,24 @@ export default function Index() {
                   Edit
                 </Button>
 
+                <AnimatedContent
+                  distance={50}
+                  direction="horizontal"
+                  reverse={false}
+                  duration={1.2}
+                  ease="bounce.out"
+                  initialOpacity={1}
+                  animateOpacity
+                  scale={1.1}
+                  
+                  delay={0.3}
+                >
                 <DeleteBtn
                   resource="doctors"
                   id={doctor.id}
                   onDeleteCallback={onDeleteCallback}
                 />
+                </AnimatedContent>
               </CardFooter>
             )}
           </Card>

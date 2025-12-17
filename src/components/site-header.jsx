@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-import { useLocation } from "react-router"
+import { useLocation } from "react-router";   //to get current path
+import DateTimeWidget from "@/components/DateTimeWidget"; //importing date time widget component
 
 export function SiteHeader() {
 
@@ -12,6 +13,16 @@ export function SiteHeader() {
     const path = location.pathname.split('/').filter(Boolean).pop() || 'dashboard';
     return path.charAt(0).toUpperCase() + path.slice(1);
   };
+
+  
+  return (   //printing the correct page title and date time widget
+    <header className="flex items-center justify-between px-6 py-3 border-b">
+      <h1 className="font-semibold">{getPageTitle()}</h1>     
+      <DateTimeWidget />
+    </header>
+  );
+
+
 
   return (
     <header
