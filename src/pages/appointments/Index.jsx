@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import SplitText from "@/components/SplitText";
 import AnimatedContent from "@/components/AnimatedContent";
+import { motion } from "motion/react";
 
 import {
   Card,
@@ -121,13 +122,34 @@ export default function AppointmentsIndex() {
               </CardContent>
 
               <CardFooter className="flex gap-2">
-                <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}`)}>
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                >
+                  <Button
+                  variant="outline"
+                  onClick={() => navigate(`/appointments/${appt.id}`)}
+                >
                   View
                 </Button>
+                </motion.div>
+                
 
-                <Button variant="outline" onClick={() => navigate(`/appointments/${appt.id}/edit`)}>
-                  Edit
-                </Button>
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                >
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/appointments/${appt.id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                </motion.div>
 
                 <AnimatedContent
                 playOnMount
