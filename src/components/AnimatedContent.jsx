@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const AnimatedContent = ({
+const AnimatedContent = ({   //all possible props
   children,
   container,
   distance = 100,

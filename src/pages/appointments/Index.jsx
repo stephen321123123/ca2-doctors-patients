@@ -86,8 +86,8 @@ export default function AppointmentsIndex() {
           return (
             <Card key={appt.id}>
               <CardHeader>
-                <SplitText
-                  text={`Appointment # ${appt.id}`}
+                <SplitText          
+                  text={`Appointment # ${appt.id}`}     //react bit for animation
                   splitType="chars"
                   delay={20}
                   duration={2}
@@ -101,7 +101,7 @@ export default function AppointmentsIndex() {
                  <p><strong>Date:</strong> {formatDate(appt.appointment_date)}</p> {/* calls formatDate */}
       
 
-                {/* <p><strong>Doctor ID:</strong> {appt.doctor_id}</p> */}     {/* only showed the id */}
+                {/* <p><strong>Doctor ID:</strong> {appt.doctor_id}</p> */}     {/* only showed the id, took it out */}
                 {/* <p><strong>Patient ID:</strong> {appt.patient_id}</p> */}
                 <p>
                   <strong>Doctor:</strong>{" "}
@@ -120,7 +120,7 @@ export default function AppointmentsIndex() {
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}    //button animation
                 >
                   <Button
                     variant="outline"

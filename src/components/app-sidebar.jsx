@@ -20,13 +20,14 @@ import {
 
 import {
   IconDashboard,
-  
   IconNurse,
   IconMoodSick,
   IconCalendarWeekFilled,
   IconMedicineSyrup,
   IconVirus,
+  IconRegistered
 } from "@tabler/icons-react";
+import { Icon } from "lucide-react";
 
 /* Sidebar navigation config (unchanged, just without hard-coded user) */
 const data = {

@@ -12,11 +12,11 @@ export default function CreateAppointment() {
     patient_id: ""
   });
 
-  const [doctors, setDoctors] = useState([]);
-  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);     //populates doctor dropdown
+  const [patients, setPatients] = useState([]);    //populates patient dropdown
 
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token } = useAuth();      //POST methods need auth token
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,7 +39,7 @@ export default function CreateAppointment() {
   };
 
   const createAppointment = async () => {
-    const formattedDate = form.appointment_date.replace("T", " ");
+    const formattedDate = form.appointment_date.replace("T", " "); //T places a space between date and time
 
     const payload = {
       appointment_date: formattedDate, 

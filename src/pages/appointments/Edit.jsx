@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";                // React hooks for state + lifecycle
+import { useState, useEffect } from "react";                
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "@/config/api";                            // Axios instance with base URL
-import { useNavigate, useParams } from "react-router";     // Routing helpers
-import { useAuth } from "@/hooks/useAuth";                  // Access auth token
+import { useNavigate, useParams } from "react-router";     
+import { useAuth } from "@/hooks/useAuth";                 
 
 export default function EditAppointment() {
   const [form, setForm] = useState({
-    appointment_date: "",                                   // Controlled input for datetime-local
-    doctor_id: "",                                          // String for <select> compatibility
+    appointment_date: "",                                   
+    doctor_id: "",                                          
     patient_id: "",
   });
 
-  const [doctors, setDoctors] = useState([]);               // Options for doctor dropdown
-  const [patients, setPatients] = useState([]);             // Options for patient dropdown
+  const [doctors, setDoctors] = useState([]);              
+  const [patients, setPatients] = useState([]);           
 
   const navigate = useNavigate();                           // Redirect after successful update
-  const { id } = useParams();                               // Appointment ID from URL
-  const { token } = useAuth();                              // JWT token for protected API calls
+  const { id } = useParams();                              
+  const { token } = useAuth();                            
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,7 +39,7 @@ export default function EditAppointment() {
         // Convert API datetime format → datetime-local format
         const apiDate = apptRes.data.appointment_date ?? "";
         const inputDate = apiDate
-          ? apiDate.replace(" ", "T").slice(0, 16)           // "YYYY-MM-DD HH:mm:ss" → "YYYY-MM-DDTHH:mm"
+          ? apiDate.replace(" ", "T").slice(0, 16)           
           : "";
 
         setForm({
@@ -48,12 +48,12 @@ export default function EditAppointment() {
           patient_id: String(apptRes.data.patient_id),
         });
       } catch (err) {
-        console.log("Load error:", err.response?.data || err); // Log API or network errors
+        console.log("Load error:", err.response?.data || err); // Log any loading errors
       }
     };
 
     if (token && id) loadData();                              // Only run when auth + ID are available
-  }, [token, id]);                                           // Re-run if token or route param changes
+  }, [token, id]);                                          
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });   // Generic handler for all inputs
@@ -86,14 +86,14 @@ export default function EditAppointment() {
       <form
         onSubmit={(e) => {
           e.preventDefault();                                 // Prevent default form submit
-          updateAppointment();                                // Run PATCH request
+          updateAppointment();                                // Run the update request
         }}
       >
         <label>Date</label>
         <Input
           type="datetime-local"
           name="appointment_date"
-          value={form.appointment_date}                        // Controlled input value
+          value={form.appointment_date}                        
           onChange={handleChange}
         />
 
@@ -101,7 +101,7 @@ export default function EditAppointment() {
         <select
           name="doctor_id"
           className="border p-2 rounded w-full"
-          value={form.doctor_id}                               // Must match option values exactly
+          value={form.doctor_id}                               
           onChange={handleChange}
         >
           <option value="">Select doctor</option>

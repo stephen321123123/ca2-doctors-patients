@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card";
 
 export default function ShowPrescription() {
-  const [prescription, setPrescription] = useState(null); // prescription object from API
+  const [prescription, setPrescription] = useState(null); 
   const [doctor, setDoctor] = useState(null); // doctor record fetched by id
   const [patient, setPatient] = useState(null); // patient record fetched by id
-  const { id } = useParams(); // prescription id from route
-  const { token } = useAuth(); // auth token for API requests
+  const { id } = useParams(); 
+  const { token } = useAuth(); 
 
 
 

@@ -20,11 +20,11 @@ const formSchema = z.object({
   specialisation: z.enum([                                                   
     "Podiatrist",
     "Dermatologist",
-    "Pediatrician",           //enum dropdown options
+    "Pediatrician", //enum dropdown options
     "Psychiatrist",
     "General Practitioner"
   ], {
-    error: () => ({ message: "Please choose a specialisation" })          // custom error message
+    error: () => ({ message: "Please choose a specialisation" }) // custom error message
   })
 });
 
@@ -33,18 +33,18 @@ export default function CreateDoctor() {
   const { token } = useAuth();
 
   const form = useForm({
-    resolver: zodResolver(formSchema),                                       // enables Zod validation
+    resolver: zodResolver(formSchema),  // enables Zod validation
     defaultValues: {
       email: "",
       first_name: "",
       last_name: "",
       phone: "",
-      specialisation: ""                                                     // starts blank
+      specialisation: "" // starts blank
     },
-    mode: "onChange"                                                         // instant validation
+    mode: "onChange"  // instant validation
   });
 
-  const submitForm = async (data) => {                                       // only runs if valid
+  const submitForm = async (data) => {     // only runs if valid
     try {
       const response = await axios.post("/doctors", data, {
         headers: { Authorization: `Bearer ${token}` }
@@ -56,7 +56,7 @@ export default function CreateDoctor() {
         }
       });
     } catch (err) {
-      console.log("BACKEND ERROR:", err.response?.data);                     // show API errors
+      console.log("BACKEND ERROR:", err.response?.data); // show API errors
     }
   };
 
@@ -67,7 +67,6 @@ export default function CreateDoctor() {
       <form onSubmit={form.handleSubmit(submitForm)}>                       
 
         <div className="grid gap-2">
- {/* email */}
         <Controller
           name="email"
           control={form.control}
@@ -82,64 +81,61 @@ export default function CreateDoctor() {
             </div>
 
             <div className="grid gap-2">
-             {/* first name */}
-        <Controller
-          name="first_name"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>First Name</FieldLabel>
-              <Input {...field} placeholder="First Name" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+              <Controller
+                name="first_name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>First Name</FieldLabel>
+                    <Input {...field} placeholder="First Name" />
+                  {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
             </div>
 
             <div className="grid gap-2">
-             {/* last name */}
-        <Controller
-          name="last_name"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Last Name</FieldLabel>
-              <Input {...field} placeholder="Last Name" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-            </div>
+              <Controller
+                name="last_name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Last Name</FieldLabel>
+                  <Input {...field} placeholder="Last Name" />
+                {fieldState.error && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+        </div>
 
             <div className="grid gap-2">
-            {/* phone */}
-        <Controller
-          name="phone"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Phone (10 digits)</FieldLabel>
-              <Input {...field} placeholder="0871234567" />
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+              <Controller
+                name="phone"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Phone (10 digits)</FieldLabel>
+                  <Input {...field} placeholder="0871234567" />
+                  {fieldState.error && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
             </div>
 
              <div className="grid gap-2">   
-        <Controller
-          name="specialisation"                                              
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Specialisation</FieldLabel>
+               <Controller
+                 name="specialisation"
+                 control={form.control}
+                 render={({ field, fieldState }) => (
+                   <Field data-invalid={fieldState.invalid}>
+                     <FieldLabel>Specialisation</FieldLabel>
 
               <Select
                 value={field.value}                                      
                 onValueChange={field.onChange}                              
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose Specialisation" />         {/* default text */}
+                  <SelectValue placeholder="Choose Specialisation" />  {/* default text */}
                 </SelectTrigger>
 
                 <SelectContent>
@@ -152,31 +148,18 @@ export default function CreateDoctor() {
               </Select>
 
               {fieldState.error && <FieldError errors={[fieldState.error]} />} {/* instant error */}
-            </Field>
-          )}
-        />
-            </div>
-
-
-       
-
-       
-
-       
-
-        
-
-       
-
-        {/* SUBMIT BUTTON */}
+                  </Field>
+                )}
+              />
+            </div>             
+  
         <Button
           className="mt-4 cursor-pointer"
           variant="outline"
-          type="submit"                                                      // triggers validation
+          type="submit"      // triggers validation
         >
           Submit
         </Button>
-
       </form>
     </>
   );

@@ -19,11 +19,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";    //ui cards componentss
 
-// console.log(import.meta.env.VITE_CALENDARIFIC_API_KEY);       //checking api key works 
-
-
-
-
+// console.log(import.meta.env.VITE_CALENDARIFIC_API_KEY);       //checking if the api key works 
 export default function Index() {
   const [doctors, setDoctors] = useState([]);
   const navigate = useNavigate();          //for changing routes

@@ -89,7 +89,6 @@ export default function Edit() {
       <h1>Update Doctor</h1>
 
       <form onSubmit={form.handleSubmit(submitForm)}>
-        {/* FIRST NAME */}
         <Controller
           name="first_name"
           control={form.control}
@@ -102,7 +101,6 @@ export default function Edit() {
           )}
         />
 
-        {/* LAST NAME */}
         <Controller
           name="last_name"
           control={form.control}
@@ -115,7 +113,6 @@ export default function Edit() {
           )}
         />
 
-        {/* EMAIL */}
         <Controller
           name="email"
           control={form.control}
@@ -128,7 +125,6 @@ export default function Edit() {
           )}
         />
 
-        {/* PHONE */}
         <Controller
           name="phone"
           control={form.control}
@@ -141,7 +137,6 @@ export default function Edit() {
           )}
         />
 
-        {/* SPECIALISATION DROPDOWN (same as Create) */}
         <Controller
           name="specialisation"
           control={form.control}
